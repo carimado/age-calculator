@@ -1,6 +1,7 @@
 import './App.css';
 import React from 'react';
 import { useState } from 'react';
+import { differenceInDays } from 'date-fns';
 
 function App() {
   const [formData, setFormData] = useState({
@@ -8,9 +9,28 @@ function App() {
       month: '', 
       year: ''
     });
+  const [results, setResults] = useState();
 
-    // create a function to calculate the age
-    // import current date and subtract the date of birth
+  const calculateAge = (event) => {
+    event.preventDefault();
+    const today = new Date();
+    console.log(today);
+    const birthDate = new Date(formData.year, formData.month - 1, formData.day);
+    console.log(birthDate);
+
+    const age = differenceInDays(today, birthDate);
+    console.log(age);
+
+    const years = Math.floor(age / 365);
+    const months = Math.floor((age % 365) / 30);
+    const days = Math.floor((age % 365) % 30);
+
+    setResults({
+      years: years,
+      months: months,
+      days: days
+    });
+  }
 
   function handleInputChange(e) {
     const { name, value } = e.target;
@@ -20,19 +40,11 @@ function App() {
     }));
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    const formDataNumbers = Object.keys(formData).map(key => {
-      return formData[key] = parseInt(formData[key]);
-    }, {});
-    console.log(formDataNumbers);
-  }
-
   return (
     <div className="App">
       <h1>Age Calculator</h1>
       <div className="calculator-container">
-        <form className="calculator-form" onSubmit={handleSubmit}>
+        <form className="calculator-form" onSubmit={calculateAge}>
           <label htmlFor="Day">Day</label>
           <input type="number" name="day" onChange={handleInputChange}></input>
           <label htmlFor="Day">Month</label>
@@ -44,6 +56,10 @@ function App() {
       </div>
       <div className="results-container">
         <h2>Results</h2>
+        <p>{results && results.years} years</p>
+        <p>{results && results.months} months</p>
+        <p>{results && results.days} days</p>
+
       </div>
     </div>
   );
